@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import OrderStatusModal from '../component/OrderStatusModal';
 
 export default function OrderCheckPage() {
   const [orderId, setOrderId] = useState('');
   const [isOrderStatusOpen, setIsOrderStatusOpen] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
 
     if (!isAuthenticated()) {
-      setError('Anda harus login terlebih dahulu');
+      showToast('Anda harus login terlebih dahulu', 'warning');
       setTimeout(() => {
         navigate('/login');
       }, 1500);
@@ -23,13 +23,13 @@ export default function OrderCheckPage() {
     }
 
     if (!orderId || orderId.trim() === '') {
-      setError('Masukkan Order ID yang valid');
+      showToast('Masukkan Order ID yang valid', 'warning');
       return;
     }
 
     const orderIdNum = parseInt(orderId);
     if (isNaN(orderIdNum) || orderIdNum <= 0) {
-      setError('Order ID harus berupa angka positif');
+      showToast('Order ID harus berupa angka positif', 'warning');
       return;
     }
 
@@ -57,15 +57,6 @@ export default function OrderCheckPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="order-check-form">
-            {error && (
-              <div className="error-message">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
-                </svg>
-                {error}
-              </div>
-            )}
-
             <div className="form-group">
               <label htmlFor="orderId">Order ID</label>
               <input

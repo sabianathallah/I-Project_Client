@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { getOrderStatus } from '../services/orderService';
 
 export default function OrderStatusModal({ isOpen, onClose, orderId }) {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [orderData, setOrderData] = useState(null);
@@ -22,7 +24,9 @@ export default function OrderStatusModal({ isOpen, onClose, orderId }) {
       const data = await getOrderStatus(orderId, token);
       setOrderData(data);
     } catch (err) {
-      setError(err.message || 'Gagal memuat status order');
+      const errorMsg = err.message || 'Gagal memuat status order';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { createOrder, TICKET_PRICE } from '../services/orderService';
 
 export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
   const { token, isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     museumName: 'Museum Sejarah Soeharto',
     visitDate: '',
@@ -25,15 +26,14 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     if (!isAuthenticated) {
-      setError('Anda harus login terlebih dahulu');
+      showToast('Anda harus login terlebih dahulu', 'warning');
       return;
     }
 
     if (!formData.visitDate) {
-      setError('Tanggal kunjungan harus diisi');
+      showToast('Tanggal kunjungan harus diisi', 'warning');
       return;
     }
 
@@ -43,7 +43,7 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
     today.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
-      setError('Tanggal kunjungan harus di masa depan');
+      showToast('Tanggal kunjungan harus di masa depan', 'warning');
       return;
     }
 
@@ -61,6 +61,7 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
       
       // If Midtrans redirect URL is provided, redirect to payment page
       if (response.midtrans && response.midtrans.redirect_url) {
+        showToast('Membuka halaman pembayaran...', 'info', 2000);
         window.open(response.midtrans.redirect_url, '_blank');
       }
 
@@ -68,6 +69,8 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
       if (onOrderCreated) {
         onOrderCreated(response.order);
       }
+
+      showToast('Pesanan berhasil dibuat!', 'success');
 
       // Reset form and close modal
       setFormData({
@@ -78,7 +81,7 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
       
       onClose();
     } catch (err) {
-      setError(err.message || 'Gagal membuat order');
+      showToast(err.message || 'Gagal membuat order', 'error');
     } finally {
       setLoading(false);
     }
@@ -114,15 +117,6 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
         </div>
 
         <form onSubmit={handleSubmit} className="ticket-order-form">
-          {error && (
-            <div className="error-message">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" />
-              </svg>
-              {error}
-            </div>
-          )}
-
           <div className="form-group">
             <label htmlFor="museumName">Nama Museum</label>
             <input

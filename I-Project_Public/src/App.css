@@ -2332,19 +2332,20 @@ footer {
    TOAST NOTIFICATION STYLES
    ======================================== */
 
-/* Toast Notification Styles */
+/* Toast Notification Styles - Dark Theme */
 .toast {
   min-width: 320px;
   max-width: 500px;
   padding: 16px 20px;
-  background: white;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
   display: flex;
   align-items: center;
   gap: 12px;
   animation: toastSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  border: 1px solid var(--border-color);
 }
 
 @keyframes toastSlideIn {
@@ -2369,8 +2370,8 @@ footer {
   flex: 1;
   margin: 0;
   font-size: 15px;
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: 500;
+  color: var(--text-color);
   line-height: 1.4;
 }
 
@@ -2383,51 +2384,51 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.5);
   border-radius: 4px;
   transition: all 0.2s;
 }
 
 .toast-close:hover {
-  background: #f7fafc;
-  color: #2d3748;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
 }
 
-/* Toast Types */
+/* Toast Types - Dark Theme with Museum Colors */
 .toast-warning {
   border-left: 4px solid #f59e0b;
-  background: linear-gradient(to right, #fffbeb 0%, white 50%);
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.15) 0%, var(--card-bg) 50%);
 }
 
 .toast-warning .toast-icon {
-  color: #f59e0b;
+  color: #fbbf24;
 }
 
 .toast-error {
   border-left: 4px solid #ef4444;
-  background: linear-gradient(to right, #fef2f2 0%, white 50%);
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.15) 0%, var(--card-bg) 50%);
 }
 
 .toast-error .toast-icon {
-  color: #ef4444;
+  color: #f87171;
 }
 
 .toast-success {
-  border-left: 4px solid #10b981;
-  background: linear-gradient(to right, #f0fdf4 0%, white 50%);
+  border-left: 4px solid var(--accent-color);
+  background: linear-gradient(to right, rgba(212, 175, 55, 0.15) 0%, var(--card-bg) 50%);
 }
 
 .toast-success .toast-icon {
-  color: #10b981;
+  color: var(--accent-color);
 }
 
 .toast-info {
-  border-left: 4px solid #3b82f6;
-  background: linear-gradient(to right, #eff6ff 0%, white 50%);
+  border-left: 4px solid var(--secondary-color);
+  background: linear-gradient(to right, rgba(139, 115, 85, 0.15) 0%, var(--card-bg) 50%);
 }
 
 .toast-info .toast-icon {
-  color: #3b82f6;
+  color: var(--secondary-color);
 }
 
 /* ========================================

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import baseUrl from '../constant/url';
 import geminiLogo from '../assets/images/logo-geminiai.jpg';
 
@@ -7,9 +8,9 @@ export default function ChatModal({ isOpen, onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
   const { token } = useAuth();
+  const { showToast } = useToast();
   
   const MAX_CHARACTERS = 1000;
 
@@ -28,13 +29,13 @@ export default function ChatModal({ isOpen, onClose }) {
     
     // Validate message length
     if (inputMessage.length > MAX_CHARACTERS) {
-      setError(`Pesan terlalu panjang. Maksimal ${MAX_CHARACTERS} karakter.`);
+      showToast(`Pesan terlalu panjang. Maksimal ${MAX_CHARACTERS} karakter.`, 'warning');
       return;
     }
     
     // Check if user is authenticated
     if (!token) {
-      setError('Anda harus login terlebih dahulu untuk menggunakan chatbot.');
+      showToast('Anda harus login terlebih dahulu untuk menggunakan chatbot.', 'warning');
       return;
     }
 
@@ -47,7 +48,6 @@ export default function ChatModal({ isOpen, onClose }) {
 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
-    setError('');
     setIsLoading(true);
 
     try {
@@ -88,6 +88,7 @@ export default function ChatModal({ isOpen, onClose }) {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
+      showToast(error.message || 'Terjadi kesalahan dalam menghubungi server', 'error');
       
       const errorMessage = {
         id: Date.now() + 1,
@@ -229,12 +230,6 @@ export default function ChatModal({ isOpen, onClose }) {
 
         {/* Input Form */}
         <form className="chat-input-form" onSubmit={handleSendMessage}>
-          {error && (
-            <div className="chat-error-message">
-              <span className="error-icon">⚠️</span>
-              {error}
-            </div>
-          )}
           <div className="chat-input-wrapper">
             <textarea
               className="chat-input"

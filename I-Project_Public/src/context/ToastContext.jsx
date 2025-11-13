@@ -31,12 +31,12 @@ export const ToastProvider = ({ children }) => {
       {children}
       <div style={{ 
         position: 'fixed', 
-        top: '24px', 
+        bottom: '24px', 
         right: '24px',
         left: 'auto',
         zIndex: 10000,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'column-reverse',
         gap: '12px',
         pointerEvents: 'none',
         maxWidth: 'calc(100vw - 48px)'
@@ -46,7 +46,7 @@ export const ToastProvider = ({ children }) => {
             key={toast.id}
             style={{
               pointerEvents: 'auto',
-              transform: `translateY(${index * 8}px)`
+              transform: `translateY(${index * -8}px)`
             }}
           >
             <Toast

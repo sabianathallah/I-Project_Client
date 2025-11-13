@@ -1,19 +1,21 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import baseUrl from '../constant/url';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
+    fullName: '',
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -24,16 +26,15 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Password tidak cocok');
+      showToast('Password tidak cocok', 'warning');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password minimal 6 karakter');
+      showToast('Password minimal 6 karakter', 'warning');
       return;
     }
 
@@ -46,6 +47,7 @@ export default function RegisterPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          fullName: formData.fullName,
           username: formData.username,
           email: formData.email,
           password: formData.password
@@ -61,14 +63,16 @@ export default function RegisterPage() {
       // Auto login after register if token is provided
       if (data.token || data.access_token) {
         login(data.user || { email: formData.email, username: formData.username }, data.token || data.access_token);
+        showToast('Registrasi berhasil! Selamat datang.', 'success');
         navigate('/');
       } else {
         // If no token, redirect to login
+        showToast('Registrasi berhasil! Silakan login.', 'success');
         navigate('/login');
       }
       
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat registrasi');
+      showToast(err.message || 'Terjadi kesalahan saat registrasi', 'error');
     } finally {
       setLoading(false);
     }
@@ -90,16 +94,21 @@ export default function RegisterPage() {
             <p>Buat akun baru Museum Soeharto</p>
           </div>
 
-          {error && (
-            <div className="error-message">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="currentColor"/>
-              </svg>
-              <span>{error}</span>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="login-form">
+            <div className="form-group">
+              <label htmlFor="fullName">Nama Lengkap</label>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="Nama lengkap Anda"
+                required
+                disabled={loading}
+              />
+            </div>
+
             <div className="form-group">
               <label htmlFor="username">Username</label>
               <input

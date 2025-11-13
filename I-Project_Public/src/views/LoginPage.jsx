@@ -1,21 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import baseUrl from '../constant/url';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   // Handle Google Sign-In response (ID token verification)
   const handleGoogleResponse = useCallback(async (response) => {
     try {
       setLoading(true);
-      setError('');
 
       const res = await fetch(`${baseUrl}/google-login`, {
         method: 'POST',
@@ -31,13 +31,14 @@ export default function LoginPage() {
 
       // Login success
       login(data.user, data.access_token);
+      showToast('Login berhasil! Selamat datang.', 'success');
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat login dengan Google');
+      showToast(err.message || 'Terjadi kesalahan saat login dengan Google', 'error');
     } finally {
       setLoading(false);
     }
-  }, [login, navigate]);
+  }, [login, navigate, showToast]);
 
   // Initialize Google Identity Services (GSI) with renderButton approach
   // This is the most reliable method for Google Sign-In
@@ -46,7 +47,7 @@ export default function LoginPage() {
 
     if (!GOOGLE_CLIENT_ID) {
       console.error('VITE_GOOGLE_CLIENT_ID is not defined in environment variables');
-      setError('Google Login belum dikonfigurasi. Hubungi administrator.');
+      showToast('Google Login belum dikonfigurasi. Hubungi administrator.', 'error', 5000);
       return;
     }
 
@@ -71,12 +72,12 @@ export default function LoginPage() {
     return () => {
       if (document.body.contains(script)) document.body.removeChild(script);
     };
-  }, [handleGoogleResponse]);
+  }, [handleGoogleResponse, showToast]);
 
   const handleGoogleLogin = () => {
     try {
       if (!window.google) {
-        setError('Google Sign-In belum siap. Silakan refresh halaman.');
+        showToast('Google Sign-In belum siap. Silakan refresh halaman.', 'warning');
         return;
       }
 
@@ -114,13 +115,12 @@ export default function LoginPage() {
       }, 100);
     } catch (err) {
       console.error('Google login error:', err);
-      setError('Gagal membuka Google Sign-In. Coba lagi.');
+      showToast('Gagal membuka Google Sign-In. Coba lagi.', 'error');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
@@ -140,10 +140,11 @@ export default function LoginPage() {
 
       // Login success
       login(data.user || { email }, data.token || data.access_token);
+      showToast('Login berhasil! Selamat datang.', 'success');
       navigate('/');
       
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat login');
+      showToast(err.message || 'Terjadi kesalahan saat login', 'error');
     } finally {
       setLoading(false);
     }
@@ -157,15 +158,6 @@ export default function LoginPage() {
             <h1>Selamat Datang</h1>
             <p>Masuk ke Museum Soeharto</p>
           </div>
-
-          {error && (
-            <div className="error-message">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="currentColor"/>
-              </svg>
-              <span>{error}</span>
-            </div>
-          )}
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">

@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function GoogleCallback() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   useEffect(() => {
     // This callback is primarily for server-side OAuth flow (if backend implements it)
@@ -19,7 +21,8 @@ export default function GoogleCallback() {
 
     if (error) {
       console.error('Google login error:', error);
-      navigate('/login?error=google_auth_failed');
+      showToast('Login dengan Google gagal. Silakan coba lagi.', 'error');
+      navigate('/login');
       return;
     }
 
@@ -38,15 +41,17 @@ export default function GoogleCallback() {
 
       // Save token and user data
       login(userData, authToken);
+      showToast('Login berhasil! Selamat datang.', 'success');
       
       // Redirect to home
       navigate('/');
     } else {
       // No token found, redirect to login
       console.log('No token found in callback URL, redirecting to login');
+      showToast('Tidak ada token autentikasi. Silakan login kembali.', 'warning');
       navigate('/login');
     }
-  }, [navigate, login]);
+  }, [navigate, login, showToast]);
 
   return (
     <div style={{
