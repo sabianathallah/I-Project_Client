@@ -19,63 +19,308 @@
   line-height: 1.6;
 }
 
-/* Header & Navigation */
-header {
-  background-color: var(--white);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  position: sticky;
+/* Modern Header & Navigation - British Museum Style */
+.modern-header {
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
+  background-color: transparent;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-nav {
+.modern-header.scrolled {
+  background-color: var(--white);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modern-nav {
   max-width: 1400px;
   margin: 0 auto;
+}
+
+.nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 3rem;
+  position: relative;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-.nav-links {
+/* Logo Styling */
+.modern-logo {
   display: flex;
-  list-style: none;
-  gap: 2.5rem;
-}
-
-.nav-links a {
+  align-items: center;
+  gap: 1rem;
   text-decoration: none;
-  color: var(--text-color);
-  font-weight: 500;
-  transition: color 0.3s;
-  font-size: 0.95rem;
+  transition: transform 0.3s ease;
 }
 
-.nav-links a:hover {
+.modern-logo:hover {
+  transform: translateY(-2px);
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.logo-main {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+
+.modern-header.scrolled .logo-main {
+  color: var(--primary-color);
+}
+
+.logo-sub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.modern-header.scrolled .logo-sub {
   color: var(--secondary-color);
 }
 
-.nav-cta {
-  background-color: var(--primary-color);
+/* Desktop Navigation Menu */
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-menu a {
+  text-decoration: none;
   color: var(--white);
-  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.modern-header.scrolled .nav-menu a {
+  color: var(--text-color);
+}
+
+.nav-menu a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+.nav-menu a:hover::after {
+  width: 100%;
+}
+
+.nav-menu a:hover {
+  color: var(--accent-color);
+}
+
+/* Nav Actions */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Search Button */
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--white);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.modern-header.scrolled .icon-btn {
+  color: var(--text-color);
+}
+
+.icon-btn:hover {
+  background-color: rgba(212, 175, 55, 0.1);
+  transform: scale(1.1);
+}
+
+/* CTA Button */
+.cta-btn {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  padding: 0.75rem 2rem;
   border-radius: 4px;
   border: none;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
-.nav-cta:hover {
-  background-color: var(--secondary-color);
+.cta-btn:hover {
+  background-color: #f0c854;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+/* Hamburger Menu */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger-btn span {
+  width: 25px;
+  height: 2px;
+  background-color: var(--white);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.modern-header.scrolled .hamburger-btn span {
+  background-color: var(--primary-color);
+}
+
+.hamburger-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+}
+
+.hamburger-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--primary-color);
+  padding: 6rem 2rem 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+}
+
+.mobile-menu.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mobile-menu-list a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: block;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-list a:hover {
+  color: var(--accent-color);
+  padding-left: 1rem;
+}
+
+.mobile-cta {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-cta-btn {
+  width: 100%;
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  padding: 1.2rem 2rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.mobile-cta-btn:hover {
+  background-color: #f0c854;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+/* Hide desktop menu on mobile */
+.desktop-menu {
+  display: flex;
+}
+
+@media (max-width: 968px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .search-btn {
+    display: none;
+  }
+
+  .cta-btn {
+    display: none;
+  }
+
+  .nav-container {
+    padding: 1.2rem 1.5rem;
+  }
 }
 
 /* Hero Section with Image Slider */
@@ -540,6 +785,83 @@ nav {
 
 .map-container {
   width: 100%;
+  position: relative;
+}
+
+/* Leaflet Map Styling */
+.leaflet-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.custom-marker {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* Additional POI Markers */
+.poi-marker,
+.parking-marker,
+.info-marker {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+}
+
+.poi-marker:hover,
+.parking-marker:hover,
+.info-marker:hover {
+  transform: scale(1.2);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.leaflet-control-attribution {
+  font-size: 0.7rem;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.leaflet-control-zoom a {
+  border: none !important;
+  color: var(--primary-color) !important;
+  font-weight: bold;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: var(--accent-color) !important;
+  color: var(--white) !important;
 }
 
 .visit-card {
