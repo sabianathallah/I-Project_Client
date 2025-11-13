@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import baseUrl from '../constant/url';
-import './ChatModal.css';
 
 export default function ChatModal({ isOpen, onClose }) {
   const [messages, setMessages] = useState([]);

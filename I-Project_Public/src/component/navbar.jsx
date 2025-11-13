@@ -41,13 +41,38 @@ export default function Navbar({ onBuyTicket, onOpenChat }) {
 
   const handleSmoothScroll = (e, targetId) => {
     e.preventDefault();
-    const target = document.querySelector(targetId);
-    if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+    
+    // Check if we're on the landing page
+    const currentPath = window.location.pathname;
+    
+    if (currentPath !== '/') {
+      // Navigate to home page first, then scroll
+      navigate('/');
+      setTimeout(() => {
+        const target = document.querySelector(targetId);
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }, 100);
+    } else {
+      // Already on home page, just scroll
+      const target = document.querySelector(targetId);
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     }
+  };
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -55,20 +80,20 @@ export default function Navbar({ onBuyTicket, onOpenChat }) {
       <nav className="modern-nav">
         <div className="nav-container">
           {/* Logo */}
-          <a href="#" className="modern-logo">
+          <button onClick={handleLogoClick} className="modern-logo">
             <img 
               src={logoImage} 
               alt="Museum Soeharto Logo" 
               className="logo-navbar-img"
             />
-          </a>
+          </button>
 
           {/* Desktop Navigation */}
           <ul className="nav-menu desktop-menu">
-            <li><a href="#beranda" onClick={(e) => handleSmoothScroll(e, '#beranda')}>Beranda</a></li>
-            <li><a href="#timeline" onClick={(e) => handleSmoothScroll(e, '#timeline')}>Timeline</a></li>
-            <li><a href="#lokasi" onClick={(e) => handleSmoothScroll(e, '#lokasi')}>Lokasi</a></li>
-            <li><a href="#tentang" onClick={(e) => handleSmoothScroll(e, '#tentang')}>Tentang</a></li>
+            <li><button onClick={(e) => handleSmoothScroll(e, '#beranda')}>Beranda</button></li>
+            <li><button onClick={(e) => handleSmoothScroll(e, '#timeline')}>Timeline</button></li>
+            <li><button onClick={(e) => handleSmoothScroll(e, '#lokasi')}>Lokasi</button></li>
+            <li><button onClick={(e) => handleSmoothScroll(e, '#tentang')}>Tentang</button></li>
           </ul>
 
           {/* Right Side Actions */}
@@ -113,6 +138,18 @@ export default function Navbar({ onBuyTicket, onOpenChat }) {
                       </div>
                     </div>
                     <div className="user-dropdown-divider"></div>
+                    <button 
+                      className="user-dropdown-item" 
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        navigate('/order-check');
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H15M12 16H15M9 12H9.01M9 16H9.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Cek Pesanan
+                    </button>
                     <button className="user-dropdown-item" onClick={handleLogout}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                         <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
@@ -149,11 +186,11 @@ export default function Navbar({ onBuyTicket, onOpenChat }) {
         {/* Mobile Menu */}
         <div className={`mobile-menu ${isMenuOpen ? 'active' : ''}`}>
           <ul className="mobile-menu-list">
-            <li><a href="#beranda" onClick={(e) => { handleSmoothScroll(e, '#beranda'); setIsMenuOpen(false); }}>Beranda</a></li>
-            <li><a href="#fitur" onClick={(e) => { handleSmoothScroll(e, '#fitur'); setIsMenuOpen(false); }}>Fitur</a></li>
-            <li><a href="#timeline" onClick={(e) => { handleSmoothScroll(e, '#timeline'); setIsMenuOpen(false); }}>Timeline</a></li>
-            <li><a href="#lokasi" onClick={(e) => { handleSmoothScroll(e, '#lokasi'); setIsMenuOpen(false); }}>Lokasi</a></li>
-            <li><a href="#tentang" onClick={(e) => { handleSmoothScroll(e, '#tentang'); setIsMenuOpen(false); }}>Tentang</a></li>
+            <li><button onClick={(e) => { handleSmoothScroll(e, '#beranda'); setIsMenuOpen(false); }}>Beranda</button></li>
+            <li><button onClick={(e) => { handleSmoothScroll(e, '#fitur'); setIsMenuOpen(false); }}>Fitur</button></li>
+            <li><button onClick={(e) => { handleSmoothScroll(e, '#timeline'); setIsMenuOpen(false); }}>Timeline</button></li>
+            <li><button onClick={(e) => { handleSmoothScroll(e, '#lokasi'); setIsMenuOpen(false); }}>Lokasi</button></li>
+            <li><button onClick={(e) => { handleSmoothScroll(e, '#tentang'); setIsMenuOpen(false); }}>Tentang</button></li>
             <li className="mobile-cta">
               <button className="mobile-cta-btn" onClick={() => { onBuyTicket(); setIsMenuOpen(false); }}>
                 Beli Tiket Museum

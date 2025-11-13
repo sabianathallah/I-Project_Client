@@ -8,6 +8,8 @@ import Navbar from '../component/navbar';
 import Footer from '../component/footer';
 import MapLeaflet from '../component/MapLeaflet';
 import ChatModal from '../component/ChatModal';
+import TicketOrderModal from '../component/TicketOrderModal';
+import OrderStatusModal from '../component/OrderStatusModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -15,6 +17,9 @@ export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [periods, setPeriods] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [isOrderStatusOpen, setIsOrderStatusOpen] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
@@ -57,15 +62,31 @@ export default function LandingPage() {
   };
 
   const handleBuyTicket = () => {
+    console.log('🎫 handleBuyTicket dipanggil!');
+    console.log('isAuthenticated:', isAuthenticated());
+    
     if (!isAuthenticated()) {
+      console.log('❌ User belum login, redirect ke login');
       showToast('Harap login terlebih dahulu', 'warning');
       setTimeout(() => {
         navigate('/login');
       }, 1500);
       return;
     }
-    // TODO: Integrate with Midtrans
-    alert('Fitur pembelian tiket akan terintegrasi dengan Midtrans');
+    
+    console.log('✅ User sudah login, buka modal');
+    setIsTicketModalOpen(true);
+    console.log('State isTicketModalOpen diset ke true');
+  };
+
+  const handleOrderCreated = (order) => {
+    showToast('Order berhasil dibuat! Silakan lanjutkan pembayaran', 'success');
+    // Save order ID to show status later
+    setCurrentOrderId(order.id);
+    // Show status modal after a short delay
+    setTimeout(() => {
+      setIsOrderStatusOpen(true);
+    }, 1000);
   };
 
   const handleOpenChatbot = () => {
@@ -221,6 +242,23 @@ export default function LandingPage() {
 
       {/* Footer Component */}
       <Footer onBuyTicket={handleBuyTicket} onOpenChatbot={handleOpenChatbot} />
+
+      {/* Chat Modal */}
+      <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+
+      {/* Ticket Order Modal */}
+      <TicketOrderModal 
+        isOpen={isTicketModalOpen} 
+        onClose={() => setIsTicketModalOpen(false)}
+        onOrderCreated={handleOrderCreated}
+      />
+
+      {/* Order Status Modal */}
+      <OrderStatusModal
+        isOpen={isOrderStatusOpen}
+        onClose={() => setIsOrderStatusOpen(false)}
+        orderId={currentOrderId}
+      />
     </div>
   );
 }

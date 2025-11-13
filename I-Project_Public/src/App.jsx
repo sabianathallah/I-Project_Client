@@ -8,6 +8,7 @@ import ArticleDetailPage from './views/ArticleDetailPage'
 import LoginPage from './views/LoginPage'
 import RegisterPage from './views/RegisterPage'
 import GoogleCallback from './views/GoogleCallback'
+import OrderCheckPage from './views/OrderCheckPage'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/google/callback" element={<GoogleCallback />} />
+          <Route path="/order-check" element={<OrderCheckPage />} />
         </Routes>
       </ToastProvider>
     </AuthProvider>
