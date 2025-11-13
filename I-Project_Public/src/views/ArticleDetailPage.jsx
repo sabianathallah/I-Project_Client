@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../constant/url';
-import Navbar from '../component/navbar';
-import Footer from '../component/footer';
+import BackButton from '../component/BackButton';
+import BackToHomeButton from '../component/BackToHomeButton';
+import { logoImage } from '../assets/logo';
 
 export default function ArticleDetailPage() {
   const [article, setArticle] = useState(null);
@@ -35,22 +36,26 @@ export default function ArticleDetailPage() {
     }
   };
 
-  const handleBackToArticles = () => {
-    navigate(-1); // Go back to previous page
-  };
-
-  const handleBackToHome = () => {
-    navigate('/');
-  };
-
   if (loading) {
     return (
       <div className="article-detail-page">
-        <Navbar />
-        <div className="container" style={{ marginTop: '6rem', textAlign: 'center', padding: '3rem' }}>
+        <div className="container" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem' }}>
+          {/* Logo Section */}
+          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+            <img 
+              src={logoImage} 
+              alt="Museum Soeharto Logo" 
+              style={{ 
+                width: '120px', 
+                height: 'auto',
+                display: 'block',
+                cursor: 'pointer'
+              }}
+              onClick={() => navigate('/')}
+            />
+          </div>
           <p>Memuat artikel...</p>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -58,38 +63,51 @@ export default function ArticleDetailPage() {
   if (error || !article) {
     return (
       <div className="article-detail-page">
-        <Navbar />
-        <div className="container" style={{ marginTop: '6rem', textAlign: 'center', padding: '3rem' }}>
+        <div className="container" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem' }}>
+          {/* Logo Section */}
+          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+            <img 
+              src={logoImage} 
+              alt="Museum Soeharto Logo" 
+              style={{ 
+                width: '120px', 
+                height: 'auto',
+                display: 'block',
+                cursor: 'pointer'
+              }}
+              onClick={() => navigate('/')}
+            />
+          </div>
           <p>{error || 'Artikel tidak ditemukan'}</p>
-          <button onClick={handleBackToHome} className="btn btn-primary" style={{ marginTop: '1rem' }}>
-            Kembali ke Beranda
-          </button>
+          <div style={{ marginTop: '1rem' }}>
+            <BackToHomeButton />
+          </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="article-detail-page">
-      <Navbar />
+      <section className="container" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+        {/* Logo Section */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <img 
+            src={logoImage} 
+            alt="Museum Soeharto Logo" 
+            style={{ 
+              width: '120px', 
+              height: 'auto',
+              display: 'block',
+              cursor: 'pointer'
+            }}
+            onClick={() => navigate('/')}
+          />
+        </div>
 
-      <section className="container" style={{ marginTop: '6rem', marginBottom: '4rem' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <button 
-            onClick={handleBackToArticles}
-            className="btn btn-secondary"
-            style={{ marginBottom: '1rem', marginRight: '0.5rem' }}
-          >
-            ← Kembali
-          </button>
-          <button 
-            onClick={handleBackToHome}
-            className="btn btn-secondary"
-            style={{ marginBottom: '1rem' }}
-          >
-            🏠 Beranda
-          </button>
+        <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <BackButton />
+          <BackToHomeButton />
         </div>
 
         <article className="article-detail">
@@ -144,8 +162,6 @@ export default function ArticleDetailPage() {
           )}
         </article>
       </section>
-
-      <Footer />
     </div>
   );
 }

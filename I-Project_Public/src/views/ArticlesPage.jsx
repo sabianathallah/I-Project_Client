@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../constant/url';
-import Navbar from '../component/navbar';
-import Footer from '../component/footer';
+import BackToHomeButton from '../component/BackToHomeButton';
+import { logoImage } from '../assets/logo';
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState([]);
@@ -50,24 +50,27 @@ export default function ArticlesPage() {
     navigate(`/article/${articleId}`);
   };
 
-  const handleBackToHome = () => {
-    navigate('/');
-  };
-
   return (
     <div className="articles-page">
-      <Navbar />
+      <section className="container" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+        {/* Logo Section */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <img 
+            src={logoImage} 
+            alt="Museum Soeharto Logo" 
+            style={{ 
+              width: '120px', 
+              height: 'auto',
+              display: 'block',
+              cursor: 'pointer'
+            }}
+            onClick={() => navigate('/')}
+          />
+        </div>
 
-      <section className="container" style={{ marginTop: '6rem', marginBottom: '4rem' }}>
         <div style={{ marginBottom: '2rem' }}>
-          <button 
-            onClick={handleBackToHome}
-            className="btn btn-secondary"
-            style={{ marginBottom: '1rem' }}
-          >
-            ← Kembali ke Beranda
-          </button>
-          <h2 className="section-title">Artikel Sejarah</h2>
+          <BackToHomeButton />
+          <h2 className="section-title" style={{ marginTop: '1.5rem' }}>Artikel Sejarah</h2>
           <p className="section-subtitle">
             {periodId ? 'Artikel dari periode yang dipilih' : 'Semua artikel sejarah'}
           </p>
@@ -93,8 +96,6 @@ export default function ArticlesPage() {
           </div>
         )}
       </section>
-
-      <Footer />
     </div>
   );
 }

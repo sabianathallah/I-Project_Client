@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import baseUrl from '../constant/url';
+import geminiLogo from '../assets/images/logo-geminiai.jpg';
 
 export default function ChatModal({ isOpen, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -138,6 +139,30 @@ export default function ChatModal({ isOpen, onClose }) {
             <div>
               <h3 className="chat-title">AI Assistant</h3>
               <p className="chat-status">Online</p>
+              <div className="powered-by" style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                marginTop: '4px'
+              }}>
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#F5F5DC',
+                  fontWeight: 'bold',
+                  letterSpacing: '0.3px'
+                }}>
+                  powered by
+                </span>
+                <img 
+                  src={geminiLogo} 
+                  alt="Gemini AI" 
+                  style={{ 
+                    height: '24px', 
+                    objectFit: 'contain',
+                    display: 'block'
+                  }} 
+                />
+              </div>
             </div>
           </div>
           <button className="chat-close-btn" onClick={onClose} aria-label="Close chat">
