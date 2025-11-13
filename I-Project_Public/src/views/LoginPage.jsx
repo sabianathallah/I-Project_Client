@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import baseUrl from '../constant/url';
@@ -10,6 +10,84 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Initialize Google Sign-In
+  useEffect(() => {
+    // Load Google Sign-In script
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      // Initialize Google Sign-In when script loads
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: 'YOUR_GOOGLE_CLIENT_ID', // TODO: Replace with actual Client ID from .env
+          callback: handleGoogleResponse,
+        });
+      }
+    };
+
+    return () => {
+      // Cleanup
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  const handleGoogleResponse = async (response) => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Send Google token to backend
+      const res = await fetch(`${baseUrl}/google-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleToken: response.credential
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Google login gagal');
+      }
+
+      // Login success
+      login(data.user, data.access_token);
+      navigate('/');
+      
+    } catch (err) {
+      setError(err.message || 'Terjadi kesalahan saat login dengan Google');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    try {
+      if (!GOOGLE_CLIENT_ID) {
+        setError('Google Login belum dikonfigurasi. Hubungi administrator.');
+        return;
+      }
+      
+      if (window.google) {
+        window.google.accounts.id.prompt(); // Show the One Tap dialog
+      } else {
+        setError('Google Sign-In belum siap. Silakan refresh halaman.');
+      }
+    } catch (err) {
+      console.error('Google login error:', err);
+      setError('Gagal membuka Google Sign-In');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,11 +118,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleLogin = () => {
-    // Redirect to Google OAuth endpoint
-    window.location.href = `${baseUrl}/google-login`;
   };
 
   return (
