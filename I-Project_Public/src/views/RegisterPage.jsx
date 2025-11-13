@@ -75,7 +75,10 @@ export default function RegisterPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${baseUrl}/google-login`;
+    // Backend expects a POST /google-login with an ID token, so redirecting
+    // directly to the backend (GET) returns 401. Instead, send user to the
+    // login page where the client-side Google Identity flow is initialized.
+    window.location.href = '/login';
   };
 
   return (

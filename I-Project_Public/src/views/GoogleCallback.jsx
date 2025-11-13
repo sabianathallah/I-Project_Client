@@ -7,7 +7,10 @@ export default function GoogleCallback() {
   const { login } = useAuth();
 
   useEffect(() => {
-    // Get token from URL query parameters
+    // This callback is primarily for server-side OAuth flow (if backend implements it)
+    // For client-side GSI flow, this page may not be needed
+    
+    // Get token from URL query parameters (server-side flow)
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const accessToken = urlParams.get('access_token');
@@ -16,7 +19,7 @@ export default function GoogleCallback() {
 
     if (error) {
       console.error('Google login error:', error);
-      navigate('/login');
+      navigate('/login?error=google_auth_failed');
       return;
     }
 
@@ -40,6 +43,7 @@ export default function GoogleCallback() {
       navigate('/');
     } else {
       // No token found, redirect to login
+      console.log('No token found in callback URL, redirecting to login');
       navigate('/login');
     }
   }, [navigate, login]);

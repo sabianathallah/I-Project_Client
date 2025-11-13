@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import baseUrl from '../constant/url';
@@ -11,47 +11,16 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Initialize Google Sign-In
-  useEffect(() => {
-    // Load Google Sign-In script
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-
-    script.onload = () => {
-      // Initialize Google Sign-In when script loads
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: 'YOUR_GOOGLE_CLIENT_ID', // TODO: Replace with actual Client ID from .env
-          callback: handleGoogleResponse,
-        });
-      }
-    };
-
-    return () => {
-      // Cleanup
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
-
-  const handleGoogleResponse = async (response) => {
+  // Handle Google Sign-In response (ID token verification)
+  const handleGoogleResponse = useCallback(async (response) => {
     try {
       setLoading(true);
       setError('');
-      
-      // Send Google token to backend
+
       const res = await fetch(`${baseUrl}/google-login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          googleToken: response.credential
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ googleToken: response.credential }),
       });
 
       const data = await res.json();
@@ -63,29 +32,89 @@ export default function LoginPage() {
       // Login success
       login(data.user, data.access_token);
       navigate('/');
-      
     } catch (err) {
       setError(err.message || 'Terjadi kesalahan saat login dengan Google');
     } finally {
       setLoading(false);
     }
-  };
+  }, [login, navigate]);
+
+  // Initialize Google Identity Services (GSI) with renderButton approach
+  // This is the most reliable method for Google Sign-In
+  useEffect(() => {
+    const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+    if (!GOOGLE_CLIENT_ID) {
+      console.error('VITE_GOOGLE_CLIENT_ID is not defined in environment variables');
+      setError('Google Login belum dikonfigurasi. Hubungi administrator.');
+      return;
+    }
+
+    // Load Google Sign-In script
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse,
+        });
+        
+        console.log('Google Identity Services initialized');
+      }
+    };
+
+    return () => {
+      if (document.body.contains(script)) document.body.removeChild(script);
+    };
+  }, [handleGoogleResponse]);
 
   const handleGoogleLogin = () => {
     try {
-      if (!GOOGLE_CLIENT_ID) {
-        setError('Google Login belum dikonfigurasi. Hubungi administrator.');
+      if (!window.google) {
+        setError('Google Sign-In belum siap. Silakan refresh halaman.');
         return;
       }
-      
-      if (window.google) {
-        window.google.accounts.id.prompt(); // Show the One Tap dialog
-      } else {
-        setError('Google Sign-In belum siap. Silakan refresh halaman.');
-      }
+
+      // Create a temporary container for Google button
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'fixed';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.left = '-9999px';
+      document.body.appendChild(tempDiv);
+
+      // Render Google button in temp div and auto-click it
+      window.google.accounts.id.renderButton(tempDiv, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        width: 250,
+      });
+
+      // Wait a bit for button to render, then click it
+      setTimeout(() => {
+        const googleButton = tempDiv.querySelector('div[role="button"]');
+        if (googleButton) {
+          googleButton.click();
+        } else {
+          // Fallback: use prompt method
+          window.google.accounts.id.prompt();
+        }
+        
+        // Clean up temp div after a delay
+        setTimeout(() => {
+          if (document.body.contains(tempDiv)) {
+            document.body.removeChild(tempDiv);
+          }
+        }, 1000);
+      }, 100);
     } catch (err) {
       console.error('Google login error:', err);
-      setError('Gagal membuka Google Sign-In');
+      setError('Gagal membuka Google Sign-In. Coba lagi.');
     }
   };
 
