@@ -17,3 +17,6 @@ export const heroImageDescriptions = [
   'Pelantikan AKABRI di Istana Merdeka - 23 Oktober 1966',
   'Panglima Mandala Mayjen Soeharto'
 ];
+
+
+

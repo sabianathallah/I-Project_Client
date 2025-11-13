@@ -1,11 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import axios from 'axios';
 import { heroImages } from '../assets/foto_landingPage';
+import { timelineBackground } from '../assets/timelineImages';
+import { API_ENDPOINTS } from '../constant/url';
 import Navbar from '../component/navbar';
 import Footer from '../component/footer';
 import MapLeaflet from '../component/MapLeaflet';
+import ChatModal from '../component/ChatModal';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [periods, setPeriods] = useState([]);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
 
   // Auto slide every 5 seconds
   useEffect(() => {
@@ -14,6 +26,23 @@ export default function LandingPage() {
     }, 5000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch periods data from API
+  useEffect(() => {
+    const fetchPeriods = async () => {
+      try {
+        console.log('Fetching periods from:', API_ENDPOINTS.PERIODS);
+        const response = await axios.get(API_ENDPOINTS.PERIODS);
+        console.log('Periods response:', response.data);
+        setPeriods(response.data);
+      } catch (error) {
+        console.error('Error fetching periods:', error);
+        console.error('Error details:', error.response);
+      }
+    };
+
+    fetchPeriods();
   }, []);
 
   const handleSmoothScroll = (e, targetId) => {
@@ -28,19 +57,50 @@ export default function LandingPage() {
   };
 
   const handleBuyTicket = () => {
+    if (!isAuthenticated()) {
+      showToast('Harap login terlebih dahulu', 'warning');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      return;
+    }
     // TODO: Integrate with Midtrans
     alert('Fitur pembelian tiket akan terintegrasi dengan Midtrans');
   };
 
   const handleOpenChatbot = () => {
-    // TODO: Open AI Chatbot
-    alert('Chatbot AI akan dibuka untuk bertanya tentang sejarah Soeharto');
+    if (!isAuthenticated()) {
+      showToast('Harap login terlebih dahulu', 'warning');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      return;
+    }
+    setIsChatOpen(true);
+  };
+
+  const handleOpenChat = () => {
+    if (!isAuthenticated()) {
+      showToast('Harap login terlebih dahulu', 'warning');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+      return;
+    }
+    setIsChatOpen(true);
+  };
+
+  const handleViewArticles = (periodId) => {
+    navigate(`/articles?periodId=${periodId}`);
   };
 
   return (
     <div className="landing-page">
       {/* Navbar Component */}
-      <Navbar onBuyTicket={handleBuyTicket} />
+      <Navbar onBuyTicket={handleBuyTicket} onOpenChat={handleOpenChat} />
+
+      {/* Chat Modal */}
+      <ChatModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
 
       {/* Hero Section with Image Slider */}
       <section className="hero" id="beranda">
@@ -88,48 +148,53 @@ export default function LandingPage() {
 
 
       {/* Timeline Section */}
-      <section className="timeline-section" id="timeline">
-        <div className="container">
-          <h2 className="section-title" style={{ textAlign: 'center' }}>Garis Waktu Sejarah</h2>
-          <p className="section-subtitle" style={{ textAlign: 'center' }}>Perjalanan penting dalam kehidupan dan kepemimpinan Presiden Soeharto</p>
+      <section 
+        className="timeline-section" 
+        id="timeline"
+        style={{
+          backgroundImage: `url(${timelineBackground})`,
+          backgroundSize: 'contain', // Menampilkan foto sepenuhnya tanpa terpotong
+          backgroundPosition: 'center top',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'scroll', // Smooth scrolling
+          position: 'relative',
+          backgroundColor: '#1a1a1a', // Background color untuk area yang tidak tertutup foto
+          minHeight: '100vh' // Pastikan section cukup tinggi untuk menampilkan foto penuh
+        }}
+      >
+        {/* Gradient overlay untuk readability - lebih halus */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.8) 100%)',
+          zIndex: 1
+        }}></div>
+        
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+          <h2 className="section-title" style={{ textAlign: 'center', color: 'white' }}>Garis Waktu Sejarah</h2>
+          <p className="section-subtitle" style={{ textAlign: 'center', color: 'white' }}>Perjalanan penting dalam kehidupan dan kepemimpinan Presiden Soeharto</p>
         </div>
         
-        <div className="timeline">
-          <TimelineItem 
-            year="1921"
-            title="Kelahiran"
-            description="Lahir di Kemusuk, Argomulyo, Yogyakarta pada 8 Juni 1921. Masa kecil yang sederhana membentuk karakter dan kepemimpinannya di masa depan."
-          />
-          
-          <TimelineItem 
-            year="1945"
-            title="Perjuangan Kemerdekaan"
-            description="Bergabung dengan tentara Indonesia dan berperan aktif dalam perjuangan mempertahankan kemerdekaan dari agresi militer Belanda."
-          />
-          
-          <TimelineItem 
-            year="1965"
-            title="Gerakan 30 September"
-            description="Memimpin penumpasan G30S/PKI dan memulai stabilisasi situasi keamanan nasional yang kacau."
-          />
-          
-          <TimelineItem 
-            year="1966"
-            title="Supersemar"
-            description="Menerima Surat Perintah Sebelas Maret yang menandai dimulainya era kepemimpinan baru dalam sejarah Indonesia."
-          />
-          
-          <TimelineItem 
-            year="1968"
-            title="Presiden RI ke-2"
-            description="Dilantik sebagai Presiden Republik Indonesia yang kedua oleh MPRS, memulai era Orde Baru dengan fokus pada pembangunan ekonomi."
-          />
-          
-          <TimelineItem 
-            year="1998"
-            title="Masa Akhir Kepemimpinan"
-            description="Mengakhiri masa kepemimpinan setelah 32 tahun memimpin Indonesia, meninggalkan warisan pembangunan yang kompleks dan kontroversial."
-          />
+        <div className="timeline" style={{ position: 'relative', zIndex: 2 }}>
+          {periods.length > 0 ? (
+            periods.map((period, index) => (
+              <TimelineItem 
+                key={period.id}
+                year={period.year || ''}
+                title={period.name_ofPeriod || period.name || 'Untitled Period'}
+                description={period.description || 'Periode penting dalam sejarah Indonesia'}
+                periodId={period.id}
+                onViewArticles={handleViewArticles}
+              />
+            ))
+          ) : (
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <p style={{ color: 'white' }}>Loading periods...</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -175,13 +240,22 @@ function FeatureCard({ icon, title, description, buttonText, onClick }) {
 }
 
 // Timeline Item Component
-function TimelineItem({ year, title, description }) {
+function TimelineItem({ year, title, description, periodId, onViewArticles }) {
   return (
     <div className="timeline-item">
       <div className="timeline-content">
         <div className="timeline-year">{year}</div>
         <h4>{title}</h4>
         <p>{description}</p>
+        {periodId && (
+          <button 
+            className="btn btn-feature" 
+            onClick={() => onViewArticles(periodId)}
+            style={{ marginTop: '1rem' }}
+          >
+            Lihat Artikel
+          </button>
+        )}
       </div>
       <div className="timeline-dot"></div>
     </div>

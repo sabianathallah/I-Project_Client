@@ -1,0 +1,185 @@
+/* ================================
+   TIMELINE BACKGROUND STYLING OPTIONS
+   Pilih salah satu style di bawah ini
+   ================================ */
+
+/* OPTION 1: Foto Penuh dengan Gradient Overlay (RECOMMENDED) ✨ */
+.timeline-section-full-image {
+  background-size: contain !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  background-color: #1a1a1a !important;
+  min-height: 100vh !important;
+}
+
+/* OPTION 2: Foto Cover dengan Aspect Ratio Terjaga */
+.timeline-section-cover {
+  background-size: 100% auto !important; /* Lebar 100%, tinggi otomatis */
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  min-height: 120vh !important;
+  background-color: #0f0f0f !important;
+}
+
+/* OPTION 3: Foto dengan Blur Background untuk Area Kosong */
+.timeline-section-blur {
+  position: relative;
+  min-height: 100vh;
+  background-color: #000;
+}
+
+.timeline-section-blur::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: inherit;
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.timeline-section-blur::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: inherit;
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* OPTION 4: Foto dengan Frame/Border Estetik */
+.timeline-section-framed {
+  background-color: #1a1a1a;
+  padding: 3rem 0;
+  min-height: 100vh;
+}
+
+.timeline-background-frame {
+  max-width: 90%;
+  margin: 0 auto 3rem;
+  border: 8px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.timeline-background-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ================================
+   GRADIENT OVERLAY OPTIONS
+   ================================ */
+
+/* Gradient Subtle - Untuk foto terang */
+.gradient-overlay-subtle {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  ) !important;
+}
+
+/* Gradient Medium - Balance antara foto dan teks */
+.gradient-overlay-medium {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  ) !important;
+}
+
+/* Gradient Strong - Untuk foto yang sangat terang */
+.gradient-overlay-strong {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.9) 100%
+  ) !important;
+}
+
+/* Gradient Radial - Fokus di tengah */
+.gradient-overlay-radial {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.8) 100%
+  ) !important;
+}
+
+/* ================================
+   RESPONSIVE ADJUSTMENTS
+   ================================ */
+
+/* Untuk tablet */
+@media (max-width: 768px) {
+  .timeline-section-full-image,
+  .timeline-section-cover {
+    background-size: cover !important; /* Switch ke cover di mobile */
+    background-position: center !important;
+    min-height: auto !important;
+    padding: 4rem 0 !important;
+  }
+}
+
+/* Untuk mobile */
+@media (max-width: 480px) {
+  .timeline-section-full-image,
+  .timeline-section-cover {
+    background-attachment: scroll !important;
+    min-height: auto !important;
+  }
+  
+  .timeline-background-frame {
+    max-width: 95%;
+    border-width: 4px;
+  }
+}
+
+/* ================================
+   ENHANCEMENT: Text Readability
+   ================================ */
+
+/* Background untuk text agar lebih terbaca */
+.timeline-text-enhancement {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Shadow untuk text */
+.text-shadow-strong {
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ================================
+   TIPS PENGGUNAAN:
+   ================================
+   
+   1. Setting saat ini sudah optimal untuk menampilkan foto penuh
+   2. Jika foto terlalu kecil, ganti backgroundSize: 'cover'
+   3. Jika ingin fokus di bagian tertentu, ubah backgroundPosition
+   4. Untuk hasil terbaik, gunakan foto dengan resolusi minimal 1920x1080px
+   5. Compress foto untuk loading lebih cepat tanpa mengurangi kualitas visual
+   
+   ================================ */
