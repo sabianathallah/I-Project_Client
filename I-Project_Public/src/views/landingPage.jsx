@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPeriods } from '../store/slices/periodsSlice';
 import { heroImages } from '../assets/foto_landingPage';
 import { timelineBackground } from '../assets/timelineImages';
-import { API_ENDPOINTS } from '../constant/url';
 import Navbar from '../component/navbar';
 import Footer from '../component/footer';
 import MapLeaflet from '../component/MapLeaflet';
@@ -15,7 +15,6 @@ import { useToast } from '../context/ToastContext';
 
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [periods, setPeriods] = useState([]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isOrderStatusOpen, setIsOrderStatusOpen] = useState(false);
@@ -23,6 +22,10 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
+  
+  // Redux for periods
+  const dispatch = useDispatch();
+  const { periods } = useSelector((state) => state.periods);
 
   // Auto slide every 5 seconds
   useEffect(() => {
@@ -33,22 +36,10 @@ export default function LandingPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch periods data from API
+  // Fetch periods data from Redux
   useEffect(() => {
-    const fetchPeriods = async () => {
-      try {
-        console.log('Fetching periods from:', API_ENDPOINTS.PERIODS);
-        const response = await axios.get(API_ENDPOINTS.PERIODS);
-        console.log('Periods response:', response.data);
-        setPeriods(response.data);
-      } catch (error) {
-        console.error('Error fetching periods:', error);
-        console.error('Error details:', error.response);
-      }
-    };
-
-    fetchPeriods();
-  }, []);
+    dispatch(fetchPeriods());
+  }, [dispatch]);
 
   const handleSmoothScroll = (e, targetId) => {
     e.preventDefault();

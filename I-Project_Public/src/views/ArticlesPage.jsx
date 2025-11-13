@@ -1,50 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import axios from 'axios';
-import { API_ENDPOINTS } from '../constant/url';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchArticles, filterArticlesByPeriod } from '../store/slices/articlesSlice';
 import BackToHomeButton from '../component/BackToHomeButton';
 import { logoImage } from '../assets/logo';
 
 export default function ArticlesPage() {
-  const [articles, setArticles] = useState([]);
-  const [filteredArticles, setFilteredArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { filteredArticles, loading, error, articles } = useSelector((state) => state.articles);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const periodId = searchParams.get('periodId');
 
+  // Fetch articles when component mounts
   useEffect(() => {
-    fetchArticles(periodId);
-  }, [periodId]);
+    dispatch(fetchArticles());
+  }, [dispatch]);
 
-  const fetchArticles = async (periodId) => {
-    try {
-      setLoading(true);
-      console.log('Fetching articles from:', API_ENDPOINTS.ARTICLES);
-      const response = await axios.get(API_ENDPOINTS.ARTICLES);
-      console.log('Articles response:', response.data);
-      const allArticles = response.data;
-      
-      // Filter articles by periodId if provided
-      // Note: API uses PeriodId (capital P) not periodId
+  // Filter articles when periodId changes OR when articles are loaded
+  useEffect(() => {
+    if (articles.length > 0) {
       if (periodId) {
-        const filtered = allArticles.filter(
-          article => article.PeriodId === parseInt(periodId)
-        );
-        console.log('Filtered articles:', filtered);
-        setFilteredArticles(filtered);
+        dispatch(filterArticlesByPeriod(periodId));
       } else {
-        setFilteredArticles(allArticles);
+        dispatch(filterArticlesByPeriod(null));
       }
-      
-      setArticles(allArticles);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching articles:', error);
-      console.error('Error details:', error.response);
-      setLoading(false);
     }
-  };
+  }, [periodId, articles.length, dispatch]);
 
   const handleViewDetail = (articleId) => {
     navigate(`/article/${articleId}`);
@@ -79,6 +61,10 @@ export default function ArticlesPage() {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>
             <p>Memuat artikel...</p>
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '3rem' }}>
+            <p>Error: {error}</p>
           </div>
         ) : filteredArticles.length > 0 ? (
           <div className="articles-grid">

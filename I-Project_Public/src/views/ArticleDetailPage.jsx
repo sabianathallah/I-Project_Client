@@ -1,40 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import axios from 'axios';
-import { API_ENDPOINTS } from '../constant/url';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchArticleDetail, clearCurrentArticle } from '../store/slices/articlesSlice';
 import BackButton from '../component/BackButton';
 import BackToHomeButton from '../component/BackToHomeButton';
 import { logoImage } from '../assets/logo';
 
 export default function ArticleDetailPage() {
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { currentArticle: article, detailLoading: loading, detailError: error } = useSelector((state) => state.articles);
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
-      fetchArticleDetail(id);
+      dispatch(fetchArticleDetail(id));
     }
-  }, [id]);
-
-  const fetchArticleDetail = async (articleId) => {
-    try {
-      setLoading(true);
-      console.log('Fetching article detail for ID:', articleId);
-      console.log('API endpoint:', API_ENDPOINTS.ARTICLE_DETAIL(articleId));
-      const response = await axios.get(API_ENDPOINTS.ARTICLE_DETAIL(articleId));
-      console.log('Article detail response:', response.data);
-      setArticle(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching article detail:', error);
-      console.error('Error details:', error.response);
-      setError('Gagal memuat artikel. Silakan coba lagi.');
-      setLoading(false);
-    }
-  };
+    
+    // Cleanup when component unmounts
+    return () => {
+      dispatch(clearCurrentArticle());
+    };
+  }, [id, dispatch]);
 
   if (loading) {
     return (
