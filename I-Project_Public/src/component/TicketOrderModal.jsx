@@ -100,8 +100,6 @@ export default function TicketOrderModal({ isOpen, onClose, onOrderCreated }) {
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
 
-  console.log('🎟️ TicketOrderModal render, isOpen:', isOpen);
-
   if (!isOpen) return null;
 
   return (

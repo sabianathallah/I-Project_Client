@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getOrderStatus } from '../services/orderService';
@@ -10,13 +10,9 @@ export default function OrderStatusModal({ isOpen, onClose, orderId }) {
   const [error, setError] = useState('');
   const [orderData, setOrderData] = useState(null);
 
-  useEffect(() => {
-    if (isOpen && orderId) {
-      fetchOrderStatus();
-    }
-  }, [isOpen, orderId]);
-
-  const fetchOrderStatus = async () => {
+  const fetchOrderStatus = useCallback(async () => {
+    if (!orderId) return;
+    
     setLoading(true);
     setError('');
 
@@ -30,7 +26,13 @@ export default function OrderStatusModal({ isOpen, onClose, orderId }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId, token, showToast]);
+
+  useEffect(() => {
+    if (isOpen && orderId) {
+      fetchOrderStatus();
+    }
+  }, [isOpen, orderId, fetchOrderStatus]);
 
   const getStatusBadge = (status) => {
     const statusConfig = {
