@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:3000'
+const baseUrl = 'https://sabianathallah.site'
 
 // API Endpoints
 export const API_ENDPOINTS = {
