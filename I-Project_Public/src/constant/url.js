@@ -1,5 +1,8 @@
 const baseUrl = 'https://sabianathallah.site'
 
+// Google OAuth Configuration
+export const GOOGLE_CLIENT_ID = '910413705303-dt3gjmu87qfg8u4c85con7188g1jqich.apps.googleusercontent.com'
+
 // API Endpoints
 export const API_ENDPOINTS = {
   // Public Endpoints (No Auth Required)

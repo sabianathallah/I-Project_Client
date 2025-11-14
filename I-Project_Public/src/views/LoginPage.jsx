@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import baseUrl from '../constant/url';
+import baseUrl, { GOOGLE_CLIENT_ID } from '../constant/url';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -43,10 +43,8 @@ export default function LoginPage() {
   // Initialize Google Identity Services (GSI) with renderButton approach
   // This is the most reliable method for Google Sign-In
   useEffect(() => {
-    const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
     if (!GOOGLE_CLIENT_ID) {
-      console.error('VITE_GOOGLE_CLIENT_ID is not defined in environment variables');
+      console.error('GOOGLE_CLIENT_ID is not defined in url.js');
       showToast('Google Login belum dikonfigurasi. Hubungi administrator.', 'error', 5000);
       return;
     }
