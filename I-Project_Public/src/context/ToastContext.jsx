@@ -1,13 +1,14 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useRef } from 'react';
 import Toast from '../component/Toast';
 
 const ToastContext = createContext(null);
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const toastCounter = useRef(0);
 
   const showToast = (message, type = 'info', duration = 3000) => {
-    const id = Date.now();
+    const id = `${Date.now()}-${toastCounter.current++}`;
     const newToast = { id, message, type, duration };
     
     setToasts(prev => [...prev, newToast]);

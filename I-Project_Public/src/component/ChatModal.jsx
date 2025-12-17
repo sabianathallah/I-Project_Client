@@ -9,6 +9,7 @@ export default function ChatModal({ isOpen, onClose }) {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const messageCounter = useRef(0);
   const { token } = useAuth();
   const { showToast } = useToast();
   
@@ -40,7 +41,7 @@ export default function ChatModal({ isOpen, onClose }) {
     }
 
     const userMessage = {
-      id: Date.now(),
+      id: `${Date.now()}-${messageCounter.current++}`,
       text: inputMessage,
       sender: 'user',
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
@@ -79,7 +80,7 @@ export default function ChatModal({ isOpen, onClose }) {
       const aiResponse = data.data?.aiResponse || data.aiResponse || data.message || 'Maaf, saya tidak dapat memproses permintaan Anda.';
 
       const aiMessage = {
-        id: Date.now() + 1,
+        id: `${Date.now()}-${messageCounter.current++}`,
         text: aiResponse,
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
@@ -91,7 +92,7 @@ export default function ChatModal({ isOpen, onClose }) {
       showToast(error.message || 'Terjadi kesalahan dalam menghubungi server', 'error');
       
       const errorMessage = {
-        id: Date.now() + 1,
+        id: `${Date.now()}-${messageCounter.current++}`,
         text: error.message || 'Maaf, terjadi kesalahan dalam menghubungi server. Silakan coba lagi.',
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
