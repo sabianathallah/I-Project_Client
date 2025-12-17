@@ -1,4 +1,4 @@
-const baseUrl = 'https://sabianathallah.site'
+const baseUrl = 'http://localhost:3000'
 
 // Google OAuth Configuration
 export const GOOGLE_CLIENT_ID = '910413705303-dt3gjmu87qfg8u4c85con7188g1jqich.apps.googleusercontent.com'
