@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:3000'
+const baseUrl = import.meta.env.VITE_API_URL ||"https://sabianathallah.site"
 
 // Google OAuth Configuration
 export const GOOGLE_CLIENT_ID = '910413705303-dt3gjmu87qfg8u4c85con7188g1jqich.apps.googleusercontent.com'
